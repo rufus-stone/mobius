@@ -16,7 +16,7 @@ class state;
 ////////////////////////////////////////////////////////////////
 class state_engine
 {
-private:
+protected:
   std::vector<std::unique_ptr<state>> states_;
 
 public:
