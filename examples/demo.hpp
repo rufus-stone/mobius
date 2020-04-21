@@ -32,6 +32,9 @@ void state_one::enter()
 void state_one::handle_input(int ch)
 {
   std::cout << "Handling input for State One!\n";
+
+  // Pop the state, for example
+  this->get_engine()->pop();
 }
 
 void state_one::restore()
