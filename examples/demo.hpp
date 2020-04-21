@@ -10,7 +10,7 @@ namespace demo
 class state_one : public mobius::state
 {
 public:
-  state_one(std::shared_ptr<mobius::state_engine> engine);
+  state_one(std::shared_ptr<mobius::engine> engine);
 
   void enter();
   void handle_input(int ch);
@@ -18,7 +18,7 @@ public:
   void exit();
 };
 
-state_one::state_one(std::shared_ptr<mobius::state_engine> engine)
+state_one::state_one(std::shared_ptr<mobius::engine> engine)
 {
   this->state_engine_ = engine;
 }
@@ -48,7 +48,7 @@ void state_one::exit()
 class state_two : public mobius::state
 {
 public:
-  state_two(std::shared_ptr<mobius::state_engine> engine);
+  state_two(std::shared_ptr<mobius::engine> engine);
 
   void enter();
   void handle_input(int ch);
@@ -56,7 +56,7 @@ public:
   void exit();
 };
 
-state_two::state_two(std::shared_ptr<mobius::state_engine> engine)
+state_two::state_two(std::shared_ptr<mobius::engine> engine)
 {
   this->state_engine_ = engine;
 }

@@ -74,15 +74,19 @@ void example_state::exit()
 }
 ```
 
-Once you've created your new state subclasses, you can use them like this:
+Once you've created your new state subclasses, you'll need an engine to drive them. Mobius provides two flavours of state engine - the vanilla `mobius::engine` that simply handles user input and state changes, and the tastier `mobius::enhanced_engine` that will internally create an object of your choosing that you can use to handle any business logic requirements. Both varieties expose the same simple interface: a templated `push<>()` method which you use to push a new state onto the stack, a `pop()` method to remove the top-most state from the stack, a `handle_input(int ch)` method that calls the corresponding `handle_input(int ch)` method for the currently active state, and an `empty()` method that returns a `bool` indicating if the internal stack of states is empty.
+
+Usage is very simple:
 
 
 ```cpp
-// First, generate a new state engine using the factory function mobius::new_state_engine(). This will return a std::shared_ptr to the engine
-auto engine = mobius::new_state_engine();
+// First, generate a new state engine using the factory functions mobius::new_engine() for a vanilla state engine, or mobius::new_enhanced_engine<>() for a tastier state engine.
+// Both functions return a std::shared_ptr to your new state engine
+auto engine = mobius::new_engine(); // Get a vanilla engine
 
 // Push the first state into the engine - this will call the given stat's enter() method, and this will become the active state
-engine->push(std::make_unique<example_state>(engine));
+// This templated function will accept any class of state as long as it is derived from the mobius::state base class
+engine->push<example_state>();
 
 // Handle some user input event - this should probably go inside your main event loop
 engine->handle_input('q');
@@ -90,11 +94,24 @@ engine->handle_input('q');
 // Pop the current state off the top of the stack - this will call the state's exit() method
 engine->pop();
 
+// If we want an enhanced engine with more complex functionality, you can call mobius::new_enhanced_engine<>() instead
+struct complex_game_logic {}; // Pretend this is your complex game logic
+auto fake_game_engine = mobius::new_enhanced_engine<complex_game_logic>();
+
+// To access that logic object, call the logic() method
+std::cout << fake_game_engine->logic().player_health << '\n'; // Assuming the complex_game_logic object has a member called player_health, this is how you could access it
+
+// You can also pass values that will be used to construct the business logic object
+auto another_example = mobius::new_enhanced_engine<std::vector<std::string>>("One", "Two"); // This creates a new std::vector<std::string> populated with the values provided.
+
+// This logic object is modifiable like this:
+another_example->logic().push_back("New entry in the vector");
+
 ```
 
 That's about it.
 
-- TODO: Generalise the `handle_input()` method to accept inputs other than just an int/char
+- Todo: Generalise the `handle_input()` method to accept inputs other than just an int/char
 
 
 
