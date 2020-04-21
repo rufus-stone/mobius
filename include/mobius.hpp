@@ -8,11 +8,17 @@
 namespace mobius
 {
 
-// Factory function for getting a std::shared_ptr to a new state engine
+// Factory functions for getting a std::shared_ptr to a new state engine
 ////////////////////////////////////////////////////////////////
-auto new_state_engine()
+auto new_engine()
 {
-  return std::make_shared<state_engine>();
+  return std::make_shared<engine>();
+}
+
+template<typename logic_t, typename ...params>
+auto new_enhanced_engine(params&& ...p)
+{
+  return std::make_shared<enhanced_engine<logic_t>>(std::forward<logic_t>(logic_t{p...}));
 }
 
 } // namespace mobius

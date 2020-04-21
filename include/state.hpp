@@ -10,7 +10,7 @@ namespace mobius
 
 // Forward declarations
 ////////////////////////////////////////////////////////////////
-class state_engine;
+class engine;
 
 // Definitions
 ////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ public:
   virtual void exit() = 0;
 
 protected:
-  std::shared_ptr<state_engine> state_engine_;
+  std::shared_ptr<engine> state_engine_;
 };
 
 } // namespace mobius

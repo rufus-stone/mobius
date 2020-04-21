@@ -12,32 +12,31 @@ namespace mobius
 ////////////////////////////////////////////////////////////////
 class state;
 
-// Definitions
+// Vanilla state engine
 ////////////////////////////////////////////////////////////////
-class state_engine
+class engine : public std::enable_shared_from_this<engine>
 {
 protected:
   std::vector<std::unique_ptr<state>> states_;
 
 public:
+  template<typename state_t, typename = std::enable_if_t<std::is_base_of_v<mobius::state, state_t>>>
+  void push()
+  {
+    auto state_ptr = std::make_unique<state_t>(this->shared_from_this());
+
+    state_ptr->enter();
+
+    this->states_.push_back(std::move(state_ptr));
+  }
+
   void handle_input(int ch);
-  void push(std::unique_ptr<state> state_ptr);
   void pop();
-  
   bool empty();
 };
 
-// Implementations
 ////////////////////////////////////////////////////////////////
-void state_engine::push(std::unique_ptr<state> state_ptr)
-{
-  state_ptr->enter();
-
-  this->states_.push_back(std::move(state_ptr));
-}
-
-////////////////////////////////////////////////////////////////
-void state_engine::pop()
+void engine::pop()
 {
   if (!this->states_.empty())
   {
@@ -53,7 +52,7 @@ void state_engine::pop()
 }
 
 ////////////////////////////////////////////////////////////////
-void state_engine::handle_input(int ch)
+void engine::handle_input(int ch)
 {
   if (!this->states_.empty())
   {
@@ -61,10 +60,33 @@ void state_engine::handle_input(int ch)
   }
 }
 
-bool state_engine::empty()
+bool engine::empty()
 {
   return this->states_.empty();
 }
 
+
+// Enhanced state engine
+////////////////////////////////////////////////////////////////
+template<typename logic_t>
+class enhanced_engine : public engine, public std::enable_shared_from_this<enhanced_engine<logic_t>>
+{
+protected:
+  logic_t logic_;
+
+
+public:
+  enhanced_engine() = default;
+  ~enhanced_engine() = default;
+
+  enhanced_engine(logic_t logic_object) : logic_(logic_object)
+  {
+  }
+
+  logic_t& logic()
+  {
+    return this->logic_;
+  }
+};
 
 } // namespace mobius
