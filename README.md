@@ -74,6 +74,10 @@ void example_state::exit()
 }
 ```
 
+The `mobius::state` class also provides a `get_engine()` method which returns a raw pointer to the engine - you can use this to interact with the engine from within a state, e.g. to push or pop new states from within the `handle_input()` method.
+
+- Todo: Figure out how to use std::shared_ptr instead of raw pointers here. This is problematic due to the way shared_from_this() works with derived classes
+
 Once you've created your new state subclasses, you'll need an engine to drive them. Mobius provides two flavours of state engine - the vanilla `mobius::engine` that simply handles user input and state changes, and the tastier `mobius::enhanced_engine` that will internally create an object of your choosing that you can use to handle any business logic requirements. Both varieties expose the same simple interface: a templated `push<>()` method which you use to push a new state onto the stack, a `pop()` method to remove the top-most state from the stack, a `handle_input(int ch)` method that calls the corresponding `handle_input(int ch)` method for the currently active state, and an `empty()` method that returns a `bool` indicating if the internal stack of states is empty.
 
 Usage is very simple:
