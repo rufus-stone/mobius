@@ -5,6 +5,8 @@
 
 #include "state.hpp"
 
+#include <iostream>
+
 namespace mobius
 {
 
@@ -23,7 +25,8 @@ public:
   template<typename state_t, typename = std::enable_if_t<std::is_base_of_v<mobius::state, state_t>>>
   void push()
   {
-    auto state_ptr = std::make_unique<state_t>(this->shared_from_this());
+    //auto state_ptr = std::make_unique<state_t>(this->shared_from_this());
+    auto state_ptr = std::make_unique<state_t>(this);
 
     state_ptr->enter();
 
@@ -86,6 +89,16 @@ public:
   logic_t& logic()
   {
     return this->logic_;
+  }
+
+  template<typename state_t, typename = std::enable_if_t<std::is_base_of_v<mobius::state, state_t>>>
+  void push()
+  {
+    auto state_ptr = std::make_unique<state_t>(this); //->shared_from_this());
+
+    state_ptr->enter();
+
+    this->states_.push_back(std::move(state_ptr));
   }
 };
 

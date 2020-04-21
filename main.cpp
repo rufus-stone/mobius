@@ -44,5 +44,7 @@ int main()
 
   std::cout << "Internal logic vector now has size: " << another_engine->logic().size() << '\n'; // Internal logic vector now has size: 3
 
+  another_engine->push<demo::state_one>();
+
   return 0;
 }
