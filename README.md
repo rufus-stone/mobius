@@ -117,7 +117,7 @@ That's about it.
 
 - Todo: Generalise the `handle_input()` method to accept inputs other than just an int/char
 
-
+- Todo: Write proper docs! The above isn't quite accurate!
 
 
 

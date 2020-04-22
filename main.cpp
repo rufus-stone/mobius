@@ -31,20 +31,19 @@ int main()
   engine->pop();
 
 
-  // Create an enhanced engine with a custom struct as it's business logic object
-  struct complex_game_logic {};
-  auto game_engine = mobius::new_enhanced_engine<complex_game_logic>();
-
-  // Here's another example where we can pass arguments that will be used to construct the logic object
-  // The construction is done using a braced constructor {} syntax under the hood, so beware if passing e.g. a std::vector or some other type where different constructors take different arguments
-  auto another_engine = mobius::new_enhanced_engine<std::vector<std::string>>("one", "two");
+  // Create an enhanced engine with a vector as it's business logic object
+  auto game_engine = mobius::new_enhanced_engine<std::vector<std::string>>("one", "two");
 
   // We can interact with the internal logic object like this
-  another_engine->logic().push_back("three");
+  game_engine->logic().push_back("three");
 
-  std::cout << "Internal logic vector now has size: " << another_engine->logic().size() << '\n'; // Internal logic vector now has size: 3
+  std::cout << "Internal logic vector now has size: " << game_engine->logic().size() << '\n'; // Internal logic vector now has size: 3
 
-  another_engine->push<demo::state_one>();
+  game_engine->push<demo::enhanced_state>();
+
+  game_engine->handle_input('p');
+  game_engine->handle_input('a');
+  game_engine->handle_input('q');
 
   return 0;
 }

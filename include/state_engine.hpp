@@ -5,8 +5,6 @@
 
 #include "state.hpp"
 
-#include <iostream>
-
 namespace mobius
 {
 
@@ -25,57 +23,51 @@ public:
   template<typename state_t, typename = std::enable_if_t<std::is_base_of_v<mobius::state, state_t>>>
   void push()
   {
-    //auto state_ptr = std::make_unique<state_t>(this->shared_from_this());
-    auto state_ptr = std::make_unique<state_t>(this);
+    auto state_ptr = std::make_unique<state_t>(this->shared_from_this());
 
     state_ptr->enter();
 
     this->states_.push_back(std::move(state_ptr));
   }
 
-  void handle_input(int ch);
-  void pop();
-  bool empty();
-};
-
-////////////////////////////////////////////////////////////////
-void engine::pop()
-{
-  if (!this->states_.empty())
+  void pop()
   {
-    this->states_.back()->exit();
-    this->states_.pop_back();
-
-    // Restore the previous state
     if (!this->states_.empty())
     {
-      this->states_.back()->restore();
+      this->states_.back()->exit();
+      this->states_.pop_back();
+
+      if (!this->states_.empty())
+      {
+        this->states_.back()->restore();
+      }
     }
   }
-}
 
-////////////////////////////////////////////////////////////////
-void engine::handle_input(int ch)
-{
-  if (!this->states_.empty())
+  void handle_input(int ch)
   {
-    this->states_.back()->handle_input(ch);
+    if (!this->states_.empty())
+    {
+      this->states_.back()->handle_input(ch);
+    }
   }
-}
 
-bool engine::empty()
-{
-  return this->states_.empty();
-}
+
+  bool empty()
+  {
+    return this->states_.empty();
+  }
+};
 
 
 // Enhanced state engine
 ////////////////////////////////////////////////////////////////
 template<typename logic_t>
-class enhanced_engine : public engine, public std::enable_shared_from_this<enhanced_engine<logic_t>>
+class enhanced_engine : public std::enable_shared_from_this<enhanced_engine<logic_t>>
 {
 protected:
   logic_t logic_;
+  std::vector<std::unique_ptr<state>> states_;
 
 
 public:
@@ -94,11 +86,39 @@ public:
   template<typename state_t, typename = std::enable_if_t<std::is_base_of_v<mobius::state, state_t>>>
   void push()
   {
-    auto state_ptr = std::make_unique<state_t>(this); //->shared_from_this());
+    auto state_ptr = std::make_unique<state_t>(this->shared_from_this());
 
     state_ptr->enter();
 
     this->states_.push_back(std::move(state_ptr));
+  }
+
+  void pop()
+  {
+    if (!this->states_.empty())
+    {
+      this->states_.back()->exit();
+      this->states_.pop_back();
+
+      if (!this->states_.empty())
+      {
+        this->states_.back()->restore();
+      }
+    }
+  }
+
+  void handle_input(int ch)
+  {
+    if (!this->states_.empty())
+    {
+      this->states_.back()->handle_input(ch);
+    }
+  }
+
+
+  bool empty()
+  {
+    return this->states_.empty();
   }
 };
 
