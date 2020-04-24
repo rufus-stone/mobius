@@ -52,8 +52,12 @@ public:
     }
   }
 
+  std::size_t size() const
+  {
+    return this->states_.size();
+  }
 
-  bool empty()
+  bool empty() const
   {
     return this->states_.empty();
   }
